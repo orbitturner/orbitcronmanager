@@ -1,0 +1,9 @@
+[functions]
+[functions.execute-task]
+verify_jwt = true
+
+[functions.execute-request]
+verify_jwt = true
+
+[functions.send-notification]
+verify_jwt = true
