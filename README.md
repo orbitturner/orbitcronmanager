@@ -1,7 +1,7 @@
 # Orbit Cron Manager (OCM)
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/yourusername/orbit-cron-manager/main/public/logo.png" alt="OCM Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/orbitturner/orbit-cron-manager/main/public/logo.png" alt="OCM Logo" width="200"/>
   
   <p>A modern, beautiful task scheduling and cron job management system built with React and Supabase.</p>
 
@@ -35,7 +35,7 @@
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/orbit-cron-manager.git
+git clone https://github.com/orbitturner/orbit-cron-manager.git
 cd orbit-cron-manager
 ```
 
@@ -89,6 +89,6 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## 📧 Contact
 
-Your Name - [@yourusername](https://twitter.com/yourusername)
+Orbit Turner - [@orbitturner](https://twitter.com/orbitturner)
 
-Project Link: [https://github.com/yourusername/orbit-cron-manager](https://github.com/yourusername/orbit-cron-manager)
+Project Link: [https://github.com/orbitturner/orbit-cron-manager](https://github.com/orbitturner/orbit-cron-manager)
