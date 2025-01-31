@@ -33,45 +33,51 @@ export function HistoryPage() {
   }
 
   return (
-    <div className="relative min-h-screen space-y-8">
+    <div className="relative min-h-screen space-y-6 lg:space-y-8">
       {/* Background gradients */}
       <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5" />
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative flex items-center justify-between"
-      >
-        <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Execution History
-          </h1>
-          <p className="mt-2 text-gray-400">Track and analyze your task executions</p>
-        </div>
-      </motion.div>
-
-      <HistoryStats stats={stats} />
-      
-      <HistoryFilters 
-        filters={filters} 
-        onFiltersChange={setFilters} 
-      />
-
       <div className="relative">
-        <HistoryTimeline 
-          data={timelineData}
-          onTaskSelect={handleTaskSelect}
-          selectedTaskId={selectedTask?.uuid}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 lg:mb-8"
+        >
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Execution History
+            </h1>
+            <p className="mt-2 text-sm lg:text-base text-gray-400">Track and analyze your task executions</p>
+          </div>
+        </motion.div>
+
+        <div className="space-y-6 lg:space-y-8">
+          <HistoryStats stats={stats} />
+          
+          <div className="grid gap-6 lg:gap-8">
+            <HistoryFilters 
+              filters={filters} 
+              onFiltersChange={setFilters} 
+            />
+
+            <div className="relative">
+              <HistoryTimeline 
+                data={timelineData}
+                onTaskSelect={handleTaskSelect}
+                selectedTaskId={selectedTask?.uuid}
+              />
+            </div>
+          </div>
+        </div>
+
+        <TaskDetailsModal
+          task={selectedTask}
+          isOpen={showDetailsModal}
+          onClose={() => setShowDetailsModal(false)}
         />
       </div>
-
-      <TaskDetailsModal
-        task={selectedTask}
-        isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
-      />
     </div>
   );
 }

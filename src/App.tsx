@@ -4,6 +4,7 @@ import { Layout } from '@/components/Layout'
 import { DashboardPage } from '@/features/tasks/pages/DashboardPage'
 import { TasksPage } from '@/features/tasks/pages/TasksPage'
 import { HistoryPage } from '@/features/tasks/pages/HistoryPage'
+import { TeamPage } from '@/features/team/pages/TeamPage'
 import { AuthPage } from '@/features/auth/pages/AuthPage'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -41,6 +42,7 @@ function App() {
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/tasks" element={<TasksPage />} />
                   <Route path="/history" element={<HistoryPage />} />
+                  <Route path="/team" element={<TeamPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Layout>

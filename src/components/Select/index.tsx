@@ -52,7 +52,8 @@ export function Select({ value, onChange, options, placeholder = 'Select...', cl
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-50 w-full mt-2 bg-card border border-white/10 rounded-lg shadow-xl overflow-hidden"
+            style={{ zIndex: 1000 }}
+            className="w-[var(--radix-select-trigger-width)] mt-2 bg-card border border-white/10 rounded-lg shadow-xl overflow-hidden"
           >
             {searchable && (
               <div className="p-2 border-b border-white/10">

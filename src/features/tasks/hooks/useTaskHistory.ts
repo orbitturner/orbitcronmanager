@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from '@/lib/notiflix';
+import { isWithinInterval, parseISO } from 'date-fns';
 import type { Task } from '@/types/task';
 
 interface HistoryFilters {
@@ -59,8 +60,43 @@ export function useTaskHistory() {
     fetchTasks();
   }, [fetchTasks]);
 
+  const filteredTasks = useMemo(() => {
+    return tasks.filter(task => {
+      // Search filter
+      if (filters.search) {
+        const searchTerm = filters.search.toLowerCase();
+        const matchesSearch = 
+          task.task_name.toLowerCase().includes(searchTerm) ||
+          task.cron_expression.toLowerCase().includes(searchTerm) ||
+          task.description?.toLowerCase().includes(searchTerm);
+        
+        if (!matchesSearch) return false;
+      }
+
+      // Status filter
+      if (filters.status.length > 0 && !filters.status.includes('all')) {
+        const matchesStatus = filters.status.some(status => 
+          task.state.toLowerCase() === status.toLowerCase()
+        );
+        if (!matchesStatus) return false;
+      }
+
+      // Date range filter
+      if (filters.dateRange[0] && filters.dateRange[1] && task.last_execution_date) {
+        const executionDate = parseISO(task.last_execution_date);
+        const isInRange = isWithinInterval(executionDate, {
+          start: filters.dateRange[0],
+          end: filters.dateRange[1]
+        });
+        if (!isInRange) return false;
+      }
+
+      return true;
+    });
+  }, [tasks, filters]);
+
   const stats: HistoryStats = useMemo(() => {
-    const executions = tasks.flatMap(t => t.execution_logs || []);
+    const executions = filteredTasks.flatMap(t => t.execution_logs || []);
     const successfulExecutions = executions.filter(
       log => log.result === 'SUCCESS'
     );
@@ -76,10 +112,10 @@ export function useTaskHistory() {
           100 || 0,
       mostFrequentErrors: getMostFrequentErrors(executions),
     };
-  }, [tasks]);
+  }, [filteredTasks]);
 
   const timelineData = useMemo(() => {
-    return tasks
+    return filteredTasks
       .filter(task => task.execution_logs?.length > 0)
       .map(task => ({
         id: task.uuid,
@@ -87,11 +123,12 @@ export function useTaskHistory() {
         executions: task.execution_logs || [],
         lastExecution: task.last_execution_date,
         status: task.state,
+        task: task
       }))
       .sort((a, b) => 
         new Date(b.lastExecution).getTime() - new Date(a.lastExecution).getTime()
       );
-  }, [tasks]);
+  }, [filteredTasks]);
 
   const handleTaskSelect = useCallback((task: Task) => {
     setSelectedTask(task);
@@ -99,7 +136,7 @@ export function useTaskHistory() {
   }, []);
 
   return {
-    tasks,
+    tasks: filteredTasks,
     selectedTask,
     setSelectedTask,
     isLoading,

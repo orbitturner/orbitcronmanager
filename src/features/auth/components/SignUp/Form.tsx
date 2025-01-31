@@ -1,19 +1,67 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { Mail, Lock, User } from 'lucide-react'
+import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { useSignUp } from '../../hooks/useSignUp'
 
 export function SignUpForm() {
   const { form: { register, formState: { errors } }, isLoading, onSubmit } = useSignUp()
+  const [showPassword, setShowPassword] = React.useState(false)
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">First Name</label>
+          <div className="relative">
+            <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            <input
+              type="text"
+              {...register('firstName', { required: 'First name is required' })}
+              className="w-full pl-10 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              placeholder="John"
+            />
+          </div>
+          {errors.firstName && (
+            <p className="text-red-400 text-sm mt-1">{errors.firstName.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Last Name</label>
+          <div className="relative">
+            <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            <input
+              type="text"
+              {...register('lastName', { required: 'Last name is required' })}
+              className="w-full pl-10 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              placeholder="Doe"
+            />
+          </div>
+          {errors.lastName && (
+            <p className="text-red-400 text-sm mt-1">{errors.lastName.message}</p>
+          )}
+        </div>
+      </div>
+
       <div>
-        <label className="block text-sm font-medium text-white mb-1">
-          Email
-        </label>
+        <label className="block text-sm text-gray-400 mb-1">Username</label>
         <div className="relative">
-          <Mail className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
+          <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+          <input
+            type="text"
+            {...register('username', { required: 'Username is required' })}
+            className="w-full pl-10 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            placeholder="johndoe"
+          />
+        </div>
+        {errors.username && (
+          <p className="text-red-400 text-sm mt-1">{errors.username.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm text-gray-400 mb-1">Email</label>
+        <div className="relative">
+          <Mail className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
           <input
             type="email"
             {...register('email', { 
@@ -23,8 +71,8 @@ export function SignUpForm() {
                 message: 'Invalid email address'
               }
             })}
-            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white placeholder-white/50"
-            placeholder="Enter your email"
+            className="w-full pl-10 pr-4 py-2.5 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            placeholder="john@example.com"
           />
         </div>
         {errors.email && (
@@ -33,66 +81,48 @@ export function SignUpForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-1">
-          Password
-        </label>
+        <label className="block text-sm text-gray-400 mb-1">Password</label>
         <div className="relative">
-          <Lock className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
+          <Lock className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
           <input
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             {...register('password', { 
               required: 'Password is required',
               minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters'
+                value: 8,
+                message: 'Password must be at least 8 characters'
               }
             })}
-            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white placeholder-white/50"
+            className="w-full pl-10 pr-12 py-2.5 bg-black/20 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
             placeholder="••••••••"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300"
+          >
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
         </div>
         {errors.password && (
           <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>
         )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-white mb-1">
-          Confirm Password
-        </label>
-        <div className="relative">
-          <Lock className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
-          <input
-            type="password"
-            {...register('confirmPassword', { 
-              required: 'Please confirm your password',
-              validate: (value) => value === register('password').value || 'Passwords do not match'
-            })}
-            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white placeholder-white/50"
-            placeholder="••••••••"
-          />
-        </div>
-        {errors.confirmPassword && (
-          <p className="text-red-400 text-sm mt-1">{errors.confirmPassword.message}</p>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between">
-        <Link 
-          to="/auth/sign-in"
-          className="text-sm text-white hover:text-primary transition-colors"
-        >
-          Already have an account?
-        </Link>
+        <p className="text-gray-500 text-sm mt-1">Minimum length is 8 characters.</p>
       </div>
 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-gradient-to-r from-primary to-purple-600 text-white py-2 rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+        className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
       >
-        {isLoading ? 'Creating account...' : 'Create account'}
+        {isLoading ? 'Creating account...' : 'Sign Up'}
       </button>
+
+      <p className="text-gray-500 text-sm text-center">
+        By creating an account, you agree to the{' '}
+        <a href="#" className="text-primary hover:text-primary/80">Terms of Service</a>.
+        We'll occasionally send you account-related emails.
+      </p>
     </form>
   )
 }
