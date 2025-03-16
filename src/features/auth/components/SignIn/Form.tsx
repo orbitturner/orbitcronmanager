@@ -72,8 +72,18 @@ export function SignInForm() {
         disabled={isLoading}
         className="w-full py-2.5 lg:py-3 rounded-lg lg:rounded-xl font-medium disabled:opacity-50 bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity text-sm lg:text-base"
       >
-        {isLoading ? 'Signing in...' : 'Get Started'}
+        {isLoading ? 'Signing in...' : 'Sign In'}
       </button>
+
+      <p className="text-center text-sm text-gray-400">
+        Don't have an account?{' '}
+        <Link 
+          to="/auth/sign-up"
+          className="text-primary hover:text-primary/80 transition-colors"
+        >
+          Sign up
+        </Link>
+      </p>
     </form>
   )
 }

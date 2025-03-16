@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 interface Command {
   script: string
@@ -22,16 +21,42 @@ serve(async (req) => {
   try {
     const { task } = await req.json() as { task: Task }
     
-    // Simuler l'exécution du script
-    const output = `Executing ${task.task_name}...\n` +
-      `Command type: ${task.command.type}\n` +
-      `Script content:\n${task.command.script}\n` +
-      `Execution completed successfully at ${new Date().toISOString()}`
+    // Execute the script based on type
+    let output = ''
+    let success = true
+    let error = null
+
+    try {
+      if (task.command.type === 'bash') {
+        const command = new Deno.Command('bash', {
+          args: ['-c', task.command.script],
+          stdout: 'piped',
+          stderr: 'piped'
+        })
+        
+        const { stdout, stderr } = await command.output()
+        const decoder = new TextDecoder()
+        
+        output = decoder.decode(stdout)
+        if (stderr.length > 0) {
+          error = decoder.decode(stderr)
+          success = false
+        }
+      } else if (task.command.type === 'pwsh') {
+        // For PowerShell, we'll simulate for now since it's not available in Edge
+        output = `[Simulated PowerShell Execution]\n${task.command.script}\n[Execution completed]`
+      }
+    } catch (execError) {
+      success = false
+      error = execError.message
+    }
     
     return new Response(
       JSON.stringify({
-        success: true,
-        output
+        success,
+        output,
+        error,
+        timestamp: new Date().toISOString()
       }),
       { 
         headers: { 'Content-Type': 'application/json' },

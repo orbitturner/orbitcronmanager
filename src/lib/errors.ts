@@ -12,7 +12,7 @@ export class AppError extends Error {
 }
 
 export function handleSupabaseError(error: PostgrestError): AppError {
-  console.error('Supabase error:', error);
+  console.error('💿⚠️ Supabase error:', error);
 
   switch (error.code) {
     case '42501':
@@ -58,5 +58,5 @@ export function logError(error: unknown, context?: string): void {
     } : error
   };
 
-  console.error('Application error:', errorDetails);
+  console.error('🎛️ Application error:', errorDetails);
 }

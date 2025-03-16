@@ -5,6 +5,14 @@ interface Endpoint {
   method: string
   headers?: Record<string, string>
   data?: any
+  options?: {
+    timeout?: number
+    retry?: {
+      enabled: boolean
+      max_attempts?: number
+      delay?: number
+    }
+  }
 }
 
 interface Task {
@@ -17,32 +25,52 @@ serve(async (req) => {
   try {
     const { task } = await req.json() as { task: Task }
     
-    // Exécuter la requête HTTP
-    const response = await fetch(task.endpoint.url, {
-      method: task.endpoint.method,
-      headers: task.endpoint.headers,
-      body: task.endpoint.data ? JSON.stringify(task.endpoint.data) : undefined
-    })
+    // Execute the HTTP request
+    const controller = new AbortController()
+    const timeout = task.endpoint.options?.timeout || 30000
     
-    const responseData = await response.text()
+    // Set timeout
+    const timeoutId = setTimeout(() => controller.abort(), timeout)
     
-    return new Response(
-      JSON.stringify({
-        success: response.ok,
-        response: responseData,
-        status: response.status,
-        headers: Object.fromEntries(response.headers)
-      }),
-      { 
-        headers: { 'Content-Type': 'application/json' },
-        status: 200
-      }
-    )
+    try {
+      const response = await fetch(task.endpoint.url, {
+        method: task.endpoint.method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...task.endpoint.headers
+        },
+        body: task.endpoint.data ? JSON.stringify(task.endpoint.data) : undefined,
+        signal: controller.signal
+      })
+      
+      clearTimeout(timeoutId)
+      
+      const responseData = await response.text()
+      const success = response.ok
+      
+      return new Response(
+        JSON.stringify({
+          success,
+          response: responseData,
+          status: response.status,
+          headers: Object.fromEntries(response.headers),
+          timestamp: new Date().toISOString()
+        }),
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          status: 200
+        }
+      )
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      throw fetchError
+    }
   } catch (error) {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message
+        error: error.message,
+        timestamp: new Date().toISOString()
       }),
       { 
         headers: { 'Content-Type': 'application/json' },

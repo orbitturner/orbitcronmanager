@@ -14,9 +14,12 @@ export function useSignUp() {
   const onSubmit = async (data: SignUpFormData) => {
     try {
       setIsLoading(true)
-      await authService.signUp(data)
-      toast.success('Account created successfully')
-      navigate('/')
+      await authService.signUp({
+        email: data.email,
+        password: data.password
+      })
+      toast.success('Account created successfully! Please sign in.')
+      navigate('/auth/sign-in')
     } catch (error) {
       logError(error, 'useSignUp.onSubmit')
       toast.error(error.message)

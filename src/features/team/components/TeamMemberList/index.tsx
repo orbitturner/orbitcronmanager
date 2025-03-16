@@ -4,11 +4,12 @@ import { TeamMemberCard } from './TeamMemberCard'
 import { LoadingState } from './LoadingState'
 import type { TeamMember } from '../../types'
 
-interface TeamListProps {
+interface TeamMemberListProps {
   members: TeamMember[]
   isLoading: boolean
   onMembersChange: () => void
   onRemoveMember: (id: string) => Promise<void>
+  onUpdateRole: (id: string, role: 'admin' | 'member') => Promise<void>
 }
 
 const container = {
@@ -21,9 +22,23 @@ const container = {
   }
 }
 
-export function TeamList({ members, isLoading, onMembersChange, onRemoveMember }: TeamListProps) {
+export function TeamMemberList({ 
+  members, 
+  isLoading, 
+  onMembersChange, 
+  onRemoveMember,
+  onUpdateRole 
+}: TeamMemberListProps) {
   if (isLoading) {
     return <LoadingState />
+  }
+
+  if (!members.length) {
+    return (
+      <div className="text-center py-8 text-gray-400">
+        No team members found
+      </div>
+    )
   }
 
   return (
@@ -39,6 +54,7 @@ export function TeamList({ members, isLoading, onMembersChange, onRemoveMember }
           member={member}
           onMembersChange={onMembersChange}
           onRemoveMember={onRemoveMember}
+          onUpdateRole={onUpdateRole}
         />
       ))}
     </motion.div>

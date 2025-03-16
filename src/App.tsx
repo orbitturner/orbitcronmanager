@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
+import { OrganizationGuard } from '@/components/OrganizationGuard'
 import { DashboardPage } from '@/features/tasks/pages/DashboardPage'
 import { TasksPage } from '@/features/tasks/pages/TasksPage'
 import { HistoryPage } from '@/features/tasks/pages/HistoryPage'
@@ -20,24 +21,24 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/auth/*"
-          element={
-            !session ? (
-              <AuthPage />
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
+    <Routes>
+      <Route
+        path="/auth/*"
+        element={
+          !session ? (
+            <AuthPage />
+          ) : (
+            <Navigate to="/" replace />
+          )
+        }
+      />
 
-        <Route
-          path="/*"
-          element={
-            session ? (
-              <Layout>
+      <Route
+        path="/*"
+        element={
+          session ? (
+            <Layout>
+              <OrganizationGuard>
                 <Routes>
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/tasks" element={<TasksPage />} />
@@ -45,14 +46,14 @@ function App() {
                   <Route path="/team" element={<TeamPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
-              </Layout>
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
-      </Routes>
-    </Router>
+              </OrganizationGuard>
+            </Layout>
+          ) : (
+            <Navigate to="/auth" replace />
+          )
+        }
+      />
+    </Routes>
   )
 }
 
